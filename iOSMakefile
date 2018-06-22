@@ -1,0 +1,112 @@
+##############################################################
+# Copyright [2018] <season4675@gmail.com>
+# Module:   iOSMakefile
+# File:     AudioManager/iOSMakefile
+##############################################################
+
+top_src_dir := $(shell pwd)
+out_lib_dir := $(top_src_dir)/out
+demo_target_dir := $(top_src_dir)/test/iOS/AudioManagerTest/AudioTest
+
+PLATFORM ?= iPhoneSimulator
+ARCH ?= x86_64
+SDKVER ?= 11.2
+
+DEVROOT := \
+  /Applications/Xcode.app/Contents/Developer/Platforms/$(PLATFORM).platform/Developer
+SDKROOT = $(DEVROOT)/SDKs/$(PLATFORM).sdk
+CROSS_COMPILE_FLAG := _IOS_PLATFORM_
+TOOLCHAINS_DIR := /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+CC := $(TOOLCHAINS_DIR)/clang
+CPP := $(TOOLCHAINS_DIR)/clang++
+AR := $(TOOLCHAINS_DIR)/ar
+RANLIB := $(TOOLCHAINS_DIR)/ranlib
+
+ifeq ($(PLATFORM), iPhoneSimulator)
+MAC_IOS_VERSION := -mios-simulator-version-min=8.0
+else ifeq ($(PLATFORM), iPhoneOS)
+MAC_IOS_VERSION := -miphoneos-version-min=7.0
+else ifeq ($(PLATFORM), MacOSX)
+MAC_IOS_VERSION := -mmacosx-version-min=10.9
+else
+MAC_IOS_VERSION := -mios-simulator-version-min=8.0
+endif
+
+common_cflags := \
+  -O3 -arch $(ARCH) \
+  -fmessage-length=0 -pipe -fpascal-strings \
+  $(MAC_IOS_VERSION) \
+  -framework Foundation \
+  -D$(CROSS_COMPILE_FLAG)
+
+common_cxxflags := $(common_cflags)
+
+common_ldflags := \
+  -pthread \
+  -arch $(ARCH) --sysroot $(SDKROOT)
+
+export top_src_dir
+export common_cflags
+export common_ldflags
+
+include $(top_src_dir)/common/src/sources.mk
+include $(top_src_dir)/engine/sources.mk
+include $(top_src_dir)/engine/audio_iOS/sources.mk
+
+#OUT := -shared -o libaudiomanager.so
+INCLUDE := $(libaudiomanager_include_dirs)
+
+libaudiomanager_cflags := \
+  $(common_cflags) \
+  $(addprefix -I, $(INCLUDE))
+
+libaudiomanager_ldflags := $(common_ldflags)
+libaudiomanager_a_target := libaudiomanager_$(PLATFORM)_$(ARCH).a
+
+libaudiomanager_c = $(filter %.c, $(libaudiomanager_src_files))
+libaudiomanager_cc = $(filter %.cc, $(libaudiomanager_src_files))
+libaudiomanager_mm = $(filter %.mm, $(libaudiomanager_src_files))
+
+libaudiomanager_c_objs := $(libaudiomanager_c:.c=.o)
+libaudiomanager_cc_objs := $(libaudiomanager_cc:.cc=.o)
+libaudiomanager_mm_objs := $(libaudiomanager_mm:.mm=.o)
+
+libaudiomanager_objs := $(libaudiomanager_c_objs) 
+libaudiomanager_objs += $(libaudiomanager_cc_objs)
+libaudiomanager_objs += $(libaudiomanager_mm_objs)
+
+all: $(libaudiomanager_a_target)
+	-mkdir -p $(out_lib_dir)
+	-mkdir -p $(out_lib_dir)/$(ARCH)/
+	mv $(libaudiomanager_a_target) $(out_lib_dir)/$(ARCH)
+	cp -f common/include/audio_common.h $(out_lib_dir)/
+	cp -f common/include/audio_manager.h $(out_lib_dir)/
+	cp -f common/include/audio_common.h $(demo_target_dir)/
+	cp -f common/include/audio_manager.h $(demo_target_dir)/
+
+$(libaudiomanager_a_target) : $(libaudiomanager_objs)
+	$(AR) rvc $@ $?
+	$(RANLIB) $@
+
+$(libaudiomanager_c_objs): %.o:%.c
+	$(CC) $(libaudiomanager_cflags) $(libaudiomanager_ldflags) -o $@ -c $<
+
+$(libaudiomanager_cc_objs): %.o:%.cc
+	$(CPP) $(libaudiomanager_cflags) $(libaudiomanager_ldflags) -o $@ -c $<
+
+$(libaudiomanager_mm_objs): %.o:%.mm
+	$(CPP) $(libaudiomanager_cflags) $(libaudiomanager_ldflags) -o $@ -c $<
+
+clean_all:
+	rm -rf $(out_lib_dir)/*$
+	find . -name "*.o" | xargs rm -f$
+	rm -rf obj$
+	rm -rf libs
+
+clean:
+	find . -name "*.o" | xargs rm -f
+	rm -rf obj
+	rm -rf libs
+
+.PHONY: all clean clean_all rebuild
+

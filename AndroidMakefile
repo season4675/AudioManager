@@ -1,0 +1,47 @@
+##############################################################
+# Copyright [2018] <season4675@gmail.com>
+# Module:   AndroidMakefile
+# File:     AudioManager/AndroidMakefile
+##############################################################
+
+target_arch := arm
+top_src_dir := $(shell pwd)
+PLATFORM = _ANDROID_PLATFORM_
+
+common_cflags := \
+	-g -O3 \
+	-fpermissive -fopenmp -fno-omit-frame-pointer -fno-function-sections -fexceptions \
+	-fPIC -ffast-math \
+	-MMD \
+	-DPOSIX -DHAVE_POSIX_MEMALIGN -DHAVE_CONFIG_H -DLOG_TYPE=1 \
+	-DIDEC_VERBOSE_ENABLED -DEMULATE_UNALIGNED_FLOAT_ACCESS -DUSE_NEON \
+	-DDEVICE_MODE -DEMBEDDED -DSUPPORT_PCRE8 \
+	-std=c++11 \
+	-D$(PLATFORM)
+
+common_ldflags := \
+  -llog -lm -ldl -lstdc++ -pthread -lOpenSLES
+
+export target_arch
+export top_src_dir
+export common_cflags
+export common_ldflags
+
+copy_dir := $(top_src_dir)/common/include
+copy_target_dir := $(top_src_dir)/test/android/AudioManagerTest/app/src/main/cpp/
+copy_audio_manager := audio_manager.h
+copy_audio_common := audio_common.h
+
+all :
+	ndk-build -C $(top_src_dir)/jni -j
+	cp -rf libs/* test/android/AudioManagerTest/app/src/main/jniLibs/
+	cp -f $(copy_dir)/$(copy_audio_manager) $(copy_target_dir)
+	cp -f $(copy_dir)/$(copy_audio_common) $(copy_target_dir)
+
+clean :
+	ndk-build clean
+	rm -rf obj
+	rm -rf libs
+
+.PHONY: all clean rebuild
+

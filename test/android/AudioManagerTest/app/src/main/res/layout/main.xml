@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello"
+        />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/start_echo"
+            android:text="@string/start_echo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/pause_echo"
+            android:text="@string/pause_echo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/stop_echo"
+            android:text="@string/stop_echo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/echo_vol_up"
+            android:text="@string/echo_vol_up"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/echo_vol_down"
+            android:text="@string/echo_vol_down"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/echo_player_mute"
+            android:text="@string/echo_player_mute"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/start_uri"
+            android:text="@string/start_uri"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/pause_uri"
+            android:text="@string/pause_uri"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/stop_uri"
+            android:text="@string/stop_uri"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/start_assets"
+            android:text="@string/start_assets"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/pause_assets"
+            android:text="@string/pause_assets"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/stop_assets"
+            android:text="@string/stop_assets"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/asset_vol_up"
+            android:text="@string/asset_vol_up"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/asset_vol_down"
+            android:text="@string/asset_vol_down"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/asset_player_mute"
+            android:text="@string/asset_player_mute"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/start_record"
+            android:text="@string/start_record"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/stop_record"
+            android:text="@string/stop_record"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/get_version"
+            android:text="@string/get_version"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+</LinearLayout>
+

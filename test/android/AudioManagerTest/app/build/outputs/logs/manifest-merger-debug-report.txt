@@ -1,0 +1,152 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+MERGED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:17:1-28:12
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:17:1-28:12
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:17:1-31:12
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:1-30:12
+	package
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:3:11-44
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+	android:versionName
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:5:11-36
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:2:11-69
+	android:versionCode
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:4:11-34
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:8:3-85
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:8:20-66
+uses-permission#android.permission.MODIFY_AUDIO_SETTINGS
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:10:3-94
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:10:20-75
+uses-permission#android.permission.INTERNET
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:12:3-81
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:12:20-62
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:14:3-77
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:14:20-75
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:15:3-78
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:15:20-76
+application
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:17:3-29:17
+MERGED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:22:5-26:19
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:22:5-26:19
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:22:5-26:19
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:22:5-26:19
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:25:5-29:19
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:25:5-29:19
+	android:label
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:21:7-39
+	android:fullBackupContent
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:19:7-40
+	android:icon
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:20:7-41
+	android:allowBackup
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:18:7-33
+activity#com.example.nativeaudio.NativeAudio
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:22:5-28:16
+	android:label
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:23:15-47
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:22:15-42
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:24:7-27:23
+action#android.intent.action.MAIN
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:25:9-61
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:25:17-58
+category#android.intent.category.LAUNCHER
+ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:26:9-69
+	android:name
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml:26:19-66
+uses-sdk
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+MERGED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:20:5-43
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:21:5-23:58
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		ADDED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/fushichen/Documents/code/AM/test/android/AudioManagerTest/app/src/main/AndroidManifest.xml
+meta-data#android.support.VERSION
+ADDED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:23:9-25:38
+MERGED from [com.android.support:animated-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-25.4.0.aar/6e67ce5eb8db4ed9b6772ca0ca556422/AndroidManifest.xml:23:9-25:38
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:23:9-25:38
+MERGED from [com.android.support:support-vector-drawable:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-25.4.0.aar/6b33bf295c7b01320bb000ade2c6560e/AndroidManifest.xml:23:9-25:38
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-v4:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-v4-25.4.0.aar/adfa47c6b4f73b68a40a6434f370d8a4/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-fragment:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-fragment-25.4.0.aar/4dd311deeaf970cbb9fa522eda5a2afe/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-media-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-media-compat-25.4.0.aar/f69d7519b20909ee4d218886f8647e6c/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-core-utils:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-utils-25.4.0.aar/7e9b263749b5270b78ab60c2687b8772/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-core-ui:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-core-ui-25.4.0.aar/04cd7ca1ff67c38359ba5a37111bb8b5/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:26:9-28:38
+MERGED from [com.android.support:support-compat:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/support-compat-25.4.0.aar/b70f8d3296188983d61edbba80ae9b0c/AndroidManifest.xml:26:9-28:38
+	android:value
+		ADDED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:28:13-35
+	android:name
+		ADDED from [com.android.support:appcompat-v7:25.4.0] /Users/fushichen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-25.4.0.aar/e8fafffea77b9a2522cb9414dacf26fa/AndroidManifest.xml:27:13-51

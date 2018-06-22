@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources>
+  <string name="hello">Welcome to Android manager module test!</string>
+  <string name="start_echo">start echo</string>
+  <string name="pause_echo">pause</string>
+  <string name="stop_echo">stop echo</string>
+  <string name="echo_vol_down">vol-5</string>
+  <string name="echo_vol_up">vol+5</string>
+  <string name="echo_player_mute">player mute</string>
+
+  <string name="start_uri">start uri</string>
+  <string name="pause_uri">pause</string>
+  <string name="stop_uri">stop uri</string>
+
+  <string name="start_assets">start assets</string>
+  <string name="pause_assets">pause</string>
+  <string name="stop_assets">stop assets</string>
+  <string name="asset_vol_down">vol-5</string>
+  <string name="asset_vol_up">vol+5</string>
+  <string name="asset_player_mute">player mute</string>
+
+  <string name="start_record">recording</string>
+  <string name="stop_record">stop</string>
+
+  <string name="get_version">get versions</string>
+
+  <string name="app_name">AudioManagerTest</string>
+  <string name="NeedRecordAudioPermission">"This sample needs RECORD_AUDIO permission"</string>
+</resources>
