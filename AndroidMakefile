@@ -17,7 +17,7 @@ common_cflags := \
 	-DIDEC_VERBOSE_ENABLED -DEMULATE_UNALIGNED_FLOAT_ACCESS -DUSE_NEON \
 	-DDEVICE_MODE -DEMBEDDED -DSUPPORT_PCRE8 \
 	-std=c++11 \
-	-D$(PLATFORM)
+	-D$(PLATFORM) -D_OPENSLES_
 
 common_ldflags := \
   -llog -lm -ldl -lstdc++ -pthread -lOpenSLES
