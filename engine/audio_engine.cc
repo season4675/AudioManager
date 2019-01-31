@@ -2,6 +2,8 @@
  * File: AudioManager/engine/audio_engine.cc
  */
 
+#define TAG "AudioEngine"
+
 #include "audio_common.h"
 #include "audio_manager.h"
 #include "audio_manager_impl.h"
@@ -10,8 +12,15 @@
 #include "audio_log.h"
 
 #ifdef _ANDROID_PLATFORM_
+#ifdef _OPENSLES_
 #include "audio_openSL/audio_opensl_impl.h"
-#elif defined _IOS_PLATFORM_
+#endif
+#ifdef _TINYALSA_
+#include "audio_tinyalsa/audio_tinyalsa_impl.h"
+#endif
+
+#elif defined _APPLE_COMPILE_
+
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wdocumentation"
 #pragma clang diagnostic ignored "-Wshadow"
@@ -20,28 +29,42 @@
 #define HAVE_SNPRINTF
 #endif
 #include "audio_iOS/audio_ios_impl.h"
+
+#elif defined _LINUX_PLATFORM_
+//#include "audio_pulseaudio/audio_pulseaudio_impl.h"
+#include "audio_ALSA/audio_alsa_impl.h"
 #endif
 
 namespace audiomanager {
 
 AudioEngine::AudioEngine() {
 #ifdef _ANDROID_PLATFORM_
+#ifdef _OPENSLES_
   engine_impl_ = new OpenslEngine;
-#elif defined _IOS_PLATFORM_
-  engine_impl_ = new AudioQueueEngine;
+#endif
+#ifdef _TINYALSA_
+  engine_impl_ = new TinyalsaEngine;
+#endif
+#elif defined _APPLE_COMPILE_
+  engine_impl_ = new AudioQueueEngine();
+#elif defined _LINUX_PLATFORM_
+//  engine_impl_ = new PulseAudioEngine;
+  engine_impl_ = new AlsaEngine;
 #endif
 }
 
 AudioEngine::~AudioEngine() {
-  if (engine_impl_ != NULL)
+  if (engine_impl_ != NULL) {
     delete engine_impl_;
+    engine_impl_ = NULL;
+  }
 }
 
 char* AudioEngine::audio_engine_getVersion() {
   char *engine_version = NULL;
   int result = -kAMUnknownError;
   if (NULL == engine_impl_) {
-    LOGE("Cannot get OpenSL engine when get version!");
+    KLOGE(TAG, "Cannot get OpenSL engine when get version!");
     return NULL;
   }
   engine_version = engine_impl_->audio_get_version();
@@ -72,10 +95,17 @@ AMResult AudioEngine::audio_engine_set_player_mute(int player_id, bool mute) {
   return result;
 }
 
-AMResult AudioEngine::audio_engine_output_open(AMDataFormat *data_format) {
+void AudioEngine::audio_engine_registerListener(const AMEventListener &listener) {
+  engine_impl_->audio_registerListener(listener);
+}
+
+AMResult AudioEngine::audio_engine_output_open(AMDataFormat *src, AMDataFormat *sink) {
   int result = -kAMUnknownError;
   if (engine_impl_ != NULL) {
-    result = engine_impl_->audio_output_open(data_format);
+    result = engine_impl_->audio_output_open(sink);
+  }
+  if (result >= 0) {
+    audio_format_parse(result, src, sink);
   }
   return result;
 }
@@ -116,10 +146,10 @@ AMResult AudioEngine::audio_engine_output_pause(int player_id) {
   return result;
 }
 
-AMResult AudioEngine::audio_engine_output_stop(int player_id) {
+AMResult AudioEngine::audio_engine_output_stop(int player_id, bool drain) {
   int result = -kAMUnknownError;
   if (engine_impl_ != NULL) {
-    result = engine_impl_->audio_output_stop(player_id);
+    result = engine_impl_->audio_output_stop(player_id, drain);
   }
   return result;
 }
@@ -330,6 +360,16 @@ AMResult AudioEngine::audio_engine_inputToFile_setAudioStatus(
     result = engine_impl_->audio_inputToFile_setAudioStatus(audio_status);
   }
   return result;
+}
+
+AMResult AudioEngine::audio_format_parse(int player_id,
+                                         AMDataFormat *src,
+                                         AMDataFormat *sink) {
+  if (src->num_channels == 1 && sink->num_channels == 2) {
+    transform_flag[player_id] = kMonoToStereo;
+    KLOGD(TAG, "audio_output_open(%d) change mono to stereo", player_id);
+  }
+  return kAMSuccess;
 }
 
 } // namespace audiomanager

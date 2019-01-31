@@ -41,7 +41,6 @@ class AudioUnitInput
 
  private:
   AudioUnit mRecordUnit;
-  AudioBufferList *recordBufList;
   Boolean mIsRunning;
 
   int ComputeRecordBufferSize(const AudioStreamBasicDescription *format,

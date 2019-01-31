@@ -8,6 +8,7 @@
 
 #include <AudioToolbox/AudioToolbox.h>
 #include <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 #include <pthread.h>
 
 //#include "CAStreamBasicDescription.h"
@@ -17,7 +18,7 @@
 #define kNumberRecordBuffers 3
 #endif
 #ifndef kBufferDurationSeconds
-#define kBufferDurationSeconds 0.5
+#define kBufferDurationSeconds 0.08
 #endif
 
 class AudioInputQueue

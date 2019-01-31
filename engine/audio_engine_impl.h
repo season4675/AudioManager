@@ -14,6 +14,7 @@ class AudioEngineImpl {
   virtual AMResult audio_output_set_vol(int vol, int player_id) = 0;
   virtual AMResult audio_output_get_vol(int player_id) = 0;
   virtual AMResult audio_output_set_mute(int player_id, bool mute) = 0;
+  virtual void audio_registerListener(const AMEventListener &listener) = 0;
 
   // Audio Engine Output
   virtual AMResult audio_output_open(AMDataFormat *data_format) = 0;
@@ -23,7 +24,7 @@ class AudioEngineImpl {
                                            int player_id) = 0;
   virtual AMBufferCount audio_output_getBufferCount(int player_id) = 0;
   virtual AMResult audio_output_pause(int player_id) = 0;
-  virtual AMResult audio_output_stop(int player_id) = 0;
+  virtual AMResult audio_output_stop(int player_id, bool drain = false) = 0;
   virtual AMResult audio_output_getAudioFormat(AMDataFormat *data_format,
                                                int player_id) = 0;
   virtual AMResult audio_output_getAudioStatus(AMAudioStatus *audio_status,

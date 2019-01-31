@@ -6,6 +6,8 @@
 //  Copyright (c) 2018 season4675. All rights reserved.
 //
 
+#define TAG "AudioOutputQueue"
+
 #include "audio_log.h"
 #include "circular_buffer.h"
 #include "AudioOutputQueue.h"
@@ -100,19 +102,20 @@ SInt32 AudioOutputQueue::InitPlayer() {
                                  &mQueue);
 
     if (!status) {
-      LOGD("Create Audio_Queue_New_Output success.");
+      KLOGD(TAG, "Create Audio_Queue_New_Output success.");
     } else {
-      LOGE("Create Audio_Queue_New_Output failed(%d).", status);
+      KLOGE(TAG, "Create Audio_Queue_New_Output failed(%d).", status);
     }
     // allocate and enqueue buffers
     // enough bytes for half a second$
+    bufSizeDurationOneSec = ComputePlayBufferSize(&mPlayFormat, 1);
     bufferByteSize = ComputePlayBufferSize(&mPlayFormat,
                                            kBufferDurationSeconds);
-    LOGD("Compute player buffer size is %d.", bufferByteSize);
+    KLOGD(TAG, "Compute player buffer size is %d.", bufferByteSize);
     for (i = 0; i < kNumberPlayBuffers; ++i) {
       status = AudioQueueAllocateBuffer(mQueue, bufferByteSize, &mBuffers[i]);
       if (status) {
-        LOGE("PlayBufferNum %d: Audio Queue Allocate Buffer failed(%d).",
+        KLOGE(TAG, "PlayBufferNum %d: Audio Queue Allocate Buffer failed(%d).",
             i,
             status);
       }
@@ -120,7 +123,7 @@ SInt32 AudioOutputQueue::InitPlayer() {
       mBuffers[i]->mAudioDataByteSize = bufferByteSize;
       status = AudioQueueEnqueueBuffer(mQueue, mBuffers[i], 0, NULL);
       if (status) {
-        LOGE("PlayBufferNum %d: Audio Queue Enqueue Buffer failed(%d).",
+        KLOGE(TAG, "PlayBufferNum %d: Audio Queue Enqueue Buffer failed(%d).",
             i,
             status);
       }

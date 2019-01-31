@@ -8,12 +8,13 @@
 
 #import <AVFoundation/AVFoundation.h>
 #include <pthread.h>
+#include "audio_common.h"
 
 #ifndef kNumberPlayBuffers
 #define kNumberPlayBuffers 3
 #endif
 #ifndef kBufferDurationSeconds
-#define kBufferDurationSeconds 1.00
+#define kBufferDurationSeconds 0.125
 #endif
 #ifndef kInputBus
 #define kInputBus 1
@@ -28,11 +29,12 @@ class AudioUnitOutput
   AudioUnitOutput();
   ~AudioUnitOutput();
 
+  void AudioUnitRegisterListener(const audiomanager::AMEventListener &listener);
   SInt32 InitPlayer();
   SInt32 RemovePlayer();
   SInt32 StartPlay();
   SInt32 PausePlay();
-  SInt32 StopPlay();
+  SInt32 StopPlay(bool drain = false);
 
   SInt32 SetVolume(int vol);
   SInt32 GetVolume();
@@ -42,7 +44,17 @@ class AudioUnitOutput
   AudioStreamBasicDescription mPlayFormat;
   circular_buffer *outrb;
   pthread_mutex_t output_mutex;
+  int bufSizeDurationOneSec;
 
+  //audio file descriptor
+  int play_type;
+  const char *locator;
+  FILE *fd;
+  int start;
+  int length;
+  bool is_drained;
+  bool mIsPaused;
+  audiomanager::AMEventListener audio_listener_;
  private:
   AudioUnit mPlayUnit;
   AudioBufferList *playBufList;

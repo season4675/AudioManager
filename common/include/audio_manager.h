@@ -23,16 +23,17 @@ class AudioManager {
   virtual AMResult audio_IAudioManager_getPlayerVolume(int player_id) = 0;
   virtual AMResult audio_IAudioManager_setPlayerMute(int player_id,
                                                      bool mute) = 0;
+  virtual AMResult audio_IAudioManager_registerListener(const AMEventListener &listener) = 0;
 
   // Audio Output
-  virtual AMResult audio_IAudioOutput_open(AMDataFormat *data_format) = 0;
+  virtual AMResult audio_IAudioOutput_open(AMDataFormat *src, AMDataFormat *sink) = 0;
   virtual AMResult audio_IAudioOutput_close(int player_id) = 0;
   virtual AMBufferCount audio_IAudioOutput_write(void *src_buffer,
                                                  const int buffer_size,
                                                  int player_id) = 0;
   virtual AMBufferCount audio_IAudioOutput_getBufferCount(int player_id) = 0;
   virtual AMResult audio_IAudioOutput_pause(int player_id) = 0;
-  virtual AMResult audio_IAudioOutput_stop(int player_id) = 0;
+  virtual AMResult audio_IAudioOutput_stop(int player_id, bool drain = false) = 0;
   virtual AMResult audio_IAudioOutput_getAudioFormat(
       AMDataFormat *data_format,
       int player_id) = 0;

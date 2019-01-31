@@ -2,8 +2,11 @@
  * File: AudioManager/engine/audio_openSL/opensl_io.c
  */
 
+#define TAG "OpenslIO"
+
 #include <string.h>
 #include <stdbool.h>
+#include <sys/time.h>
 #include "opensl_io.h"
 #include <android/log.h>
 
@@ -47,11 +50,24 @@ void *createThreadLock(void)
 
 int waitThreadLock(void *lock) {
   threadLock *threadlock;
+  struct timeval now;
+  struct timespec outtime;
   int retval = 0;
+  int loop = 2;
+
   threadlock = (threadLock*)lock;
   pthread_mutex_lock(&(threadlock->m));
-  while (!threadlock->s) {
-    pthread_cond_wait(&(threadlock->c), &(threadlock->m));
+  while (!threadlock->s && loop-- > 0) {
+    gettimeofday(&now, NULL);
+    outtime.tv_sec = now.tv_sec + 1;
+    outtime.tv_nsec = now.tv_usec * 1000;
+    pthread_cond_timedwait(&(threadlock->c), &(threadlock->m), &outtime);
+  }
+  if (loop <= 0) {
+    LOGE("waitThreadLock failed!");
+    threadlock->s = (unsigned char)0;
+    pthread_mutex_unlock(&(threadlock->m));
+    return SL_RESULT_INTERNAL_ERROR;
   }
   threadlock->s = (unsigned char)0;
   pthread_mutex_unlock(&(threadlock->m));
@@ -81,6 +97,7 @@ int openSL_read_enqueue(OpenslStream *opensl_stream,
                         int size) {
   char *in_buf;
   int loop;
+  int result = SL_RESULT_SUCCESS;
   int index = opensl_stream->cur_input_index;
   int bytes = opensl_stream->in_buf_samples * sizeof(short);
   char *read_buf = (char *)buffer;
@@ -89,7 +106,9 @@ int openSL_read_enqueue(OpenslStream *opensl_stream,
   in_buf = opensl_stream->input_buf[opensl_stream->cur_input_buf];
   for (loop = 0; loop < size; loop++) {
     if (index >= bytes) {
-      waitThreadLock(opensl_stream->inlock);
+      result = waitThreadLock(opensl_stream->inlock);
+      if (result == SL_RESULT_INTERNAL_ERROR)
+        return -result;
       (*opensl_stream->recorder_buf_que)->Enqueue(
           opensl_stream->recorder_buf_que, 
           in_buf,
@@ -110,6 +129,7 @@ int openSL_write_enqueue(OpenslStream *opensl_stream,
                          int player_id) {
   char *out_buf;
   int loop;
+  int result = SL_RESULT_SUCCESS;
   int index = opensl_stream->cur_output_index[player_id];
   int bytes = opensl_stream->out_buf_samples[player_id] * sizeof(short);
   char *write_buf = (char *)buffer;
@@ -120,7 +140,9 @@ int openSL_write_enqueue(OpenslStream *opensl_stream,
   for (loop = 0; loop < size; loop++) {
     out_buf[index++] = write_buf[loop];
     if (index >= bytes) {
-      waitThreadLock(opensl_stream->outlock[player_id]);
+      result = waitThreadLock(opensl_stream->outlock[player_id]);
+      if (result == SL_RESULT_INTERNAL_ERROR)
+        return -result;
       (*opensl_stream->bq_player_buf_que[player_id])->Enqueue(
           opensl_stream->bq_player_buf_que[player_id],
           out_buf,
@@ -153,7 +175,7 @@ void bq_recorder_callback(SLAndroidSimpleBufferQueueItf buf_que,
 }
 
 SLresult openSL_create_engine(OpenslStream *opensl_stream) {
-  SLresult result = -1;
+  SLresult result = SL_RESULT_PRECONDITIONS_VIOLATED;
 
   // create engine
   result = slCreateEngine(&(opensl_stream->engine_obj),
@@ -192,50 +214,76 @@ SLresult openSL_create_engine(OpenslStream *opensl_stream) {
 
 SLresult openSL_destroy_engine(OpenslStream *opensl_stream) {
   // destroy engine object, and invalidate all associated interfaces
-  if (NULL != opensl_stream->engine_obj) {
+  if (opensl_stream != NULL && opensl_stream->engine_obj != NULL) {
     (*(opensl_stream->engine_obj))->Destroy(opensl_stream->engine_obj);
     opensl_stream->engine_obj = NULL;
     opensl_stream->engine_itf = NULL;
+    LOGD("OpenSLES destroy engine success!");
   }
   return SL_RESULT_SUCCESS;
 }
 
 SLresult openSL_create_output_mix(OpenslStream *opensl_stream) {
-  SLresult result = -1;
+  SLresult result = SL_RESULT_UNKNOWN_ERROR;
   const SLInterfaceID interface_ids[1] = {SL_IID_ENVIRONMENTALREVERB};
   const SLboolean interface_req[1] = {SL_BOOLEAN_FALSE};
+
+  if (opensl_stream == NULL) {
+    LOGE("opensl_stream is nullptr!");
+    return result;
+  }
+/*
+  // huawei测试机会崩溃
   SLEnvironmentalReverbSettings reverb_settings =
       SL_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR;
+*/
 
   // create output mix,
   // with environmental reverb specified as a non-required interface
-  result = (*(opensl_stream->engine_itf))->CreateOutputMix(
-      opensl_stream->engine_itf,
-      &(opensl_stream->output_mix_obj),
-      sizeof(interface_ids) / sizeof(interface_ids[0]),
-      interface_ids,
-      interface_req);
-  if (result != SL_RESULT_SUCCESS) return result;
+  if (opensl_stream->engine_itf != NULL) {
+    result = (*(opensl_stream->engine_itf))->CreateOutputMix(
+        opensl_stream->engine_itf,
+        &(opensl_stream->output_mix_obj),
+        sizeof(interface_ids) / sizeof(interface_ids[0]),
+        interface_ids,
+        interface_req);
+    if (result != SL_RESULT_SUCCESS) return result;
+  } else {
+    LOGE("opensl_stream->engine_itf is nullptr");
+    return result;
+  }
 
-  result = (*(opensl_stream->output_mix_obj))->Realize(
-      opensl_stream->output_mix_obj,
-      SL_BOOLEAN_FALSE);
+  if (opensl_stream->output_mix_obj != NULL) {
+    result = (*(opensl_stream->output_mix_obj))->Realize(
+        opensl_stream->output_mix_obj,
+        SL_BOOLEAN_FALSE);
+  } else {
+    LOGE("opensl_stream->output_mix_obj is nullptr");
+    return result;
+  }
 
   // get the environmental reverb interface
   // this could fail if the environmental reverb effect is not available,
   // either because the feature is not present, excessive CPU load, or
   // the required MODIFY_AUDIO_SETTINGS permission was not requested and granted
-  result = (*(opensl_stream->output_mix_obj))->GetInterface(
-      opensl_stream->output_mix_obj,
-      SL_IID_ENVIRONMENTALREVERB,
-      &(opensl_stream->output_mix_env_reverb));
-  if (SL_RESULT_SUCCESS == result) {
-    result = (*(opensl_stream->output_mix_env_reverb))->
-        SetEnvironmentalReverbProperties(
-            opensl_stream->output_mix_env_reverb,
-            &reverb_settings);
+/*
+  // 这里huawei测试机会崩溃
+  if (opensl_stream->output_mix_obj != NULL) {
+    result = (*(opensl_stream->output_mix_obj))->GetInterface(
+        opensl_stream->output_mix_obj,
+        SL_IID_ENVIRONMENTALREVERB,
+        &(opensl_stream->output_mix_env_reverb));
+    if (SL_RESULT_SUCCESS == result) {
+      result = (*(opensl_stream->output_mix_env_reverb))->
+          SetEnvironmentalReverbProperties(
+              opensl_stream->output_mix_env_reverb,
+              &reverb_settings);
+    }
+  } else {
+    LOGE("opensl_stream->output_mix_obj is nullptr");
+    return result;
   }
-
+*/
   // ignore unsuccessful result codes for environmental reverb,
   // as it is optional for this example
   return result;
@@ -243,10 +291,11 @@ SLresult openSL_create_output_mix(OpenslStream *opensl_stream) {
 
 SLresult openSL_destroy_output_mix(OpenslStream *opensl_stream) {
   // destroy output mix object, and invalidate all associated interface.
-  if (NULL != opensl_stream->output_mix_obj) {
-    (*(opensl_stream->output_mix_obj))->Destroy(opensl_stream->engine_obj);
-    opensl_stream->engine_obj = NULL;
-    opensl_stream->engine_itf = NULL;
+  if (opensl_stream != NULL && opensl_stream->output_mix_obj != NULL) {
+    (*(opensl_stream->output_mix_obj))->Destroy(opensl_stream->output_mix_obj);
+    opensl_stream->output_mix_obj = NULL;
+    //opensl_stream->engine_itf = NULL;
+    LOGD("OpenSLES destroy output mix success!");
   }
 
   return SL_RESULT_SUCCESS;
@@ -304,7 +353,7 @@ SLresult openSL_init_player(OpenslStream *opensl_stream, int player_id) {
   if (kSLFileTypeURI == opensl_stream->play_type[player_id]) {
     if (NULL == opensl_stream->locator) {
       LOGE("OpenSL locator URI is NULL!");
-      return -SL_RESULT_PARAMETER_INVALID;
+      return SL_RESULT_PARAMETER_INVALID;
     } else {
       LOGD("OpenSL locator URI: %s", (SLchar *)opensl_stream->locator);
     }
@@ -399,26 +448,44 @@ SLresult openSL_init_player(OpenslStream *opensl_stream, int player_id) {
 }
 
 SLresult openSL_remove_player(OpenslStream *opensl_stream, int player_id) {
-  int result = -SL_RESULT_RESOURCE_ERROR;
+  int result = SL_RESULT_RESOURCE_ERROR;
   // destroy buffer queue audio player object,
   // and invalidate all associated interfaces.
-  if (opensl_stream->bq_player_obj[player_id] != NULL) {
+  if (opensl_stream != NULL &&
+      opensl_stream->bq_player_obj[player_id] != NULL &&
+      opensl_stream->bq_player_play[player_id] != NULL) {
     SLuint32 state = SL_PLAYSTATE_PLAYING;
+    SLint16 loop = 10;
     (*(opensl_stream->bq_player_play[player_id]))->SetPlayState(
         opensl_stream->bq_player_play[player_id],
         SL_PLAYSTATE_STOPPED);
-    opensl_stream->output_state[player_id] = SL_PLAYSTATE_STOPPED;
-    while (state != SL_PLAYSTATE_STOPPED) {
-      (*(opensl_stream->bq_player_play[player_id]))->GetPlayState(
-          opensl_stream->bq_player_play[player_id],
-          &state);
+    do {
+      if (opensl_stream != NULL && opensl_stream->bq_player_play[player_id] != NULL) {
+        (*(opensl_stream->bq_player_play[player_id]))->GetPlayState(
+            opensl_stream->bq_player_play[player_id],
+            &state);
+        if (state == SL_PLAYSTATE_STOPPED) {
+          break;
+        } else {
+          if (loop < 5)
+            usleep(3 * 1000);
+        }
+      } else {
+        LOGE("set player state failed! bq_player_play is null!");
+        return SL_RESULT_RESOURCE_ERROR;
+      }
+    } while (loop-- > 0 && state != SL_PLAYSTATE_STOPPED);
+    if (loop <= 0) {
+      LOGE("set player state failed! remove player failed!");
+      return SL_RESULT_RESOURCE_ERROR;
     }
+    opensl_stream->output_state[player_id] = 0;
     (*(opensl_stream->bq_player_obj[player_id]))->Destroy(
         opensl_stream->bq_player_obj[player_id]);
     opensl_stream->bq_player_obj[player_id] = NULL;
     opensl_stream->bq_player_play[player_id] = NULL;
     opensl_stream->bq_player_buf_que[player_id] = NULL;
-
+    LOGD("OpenSLES remove player success!");
     result = SL_RESULT_SUCCESS;
   }
   return result;
@@ -526,22 +593,42 @@ SLresult openSL_init_recorder(OpenslStream *opensl_stream) {
 }
 
 SLresult openSL_remove_recorder(OpenslStream *opensl_stream) {
-  if (opensl_stream->recorder_obj != NULL) {
+  if (opensl_stream != NULL &&
+      opensl_stream->recorder_record != NULL &&
+      opensl_stream->recorder_obj != NULL) {
     SLuint32 state = SL_RECORDSTATE_RECORDING;
+    SLint16 loop = 10;
     (*(opensl_stream->recorder_record))->SetRecordState(
         opensl_stream->recorder_record,
         SL_RECORDSTATE_STOPPED);
-    opensl_stream->input_state = SL_RECORDSTATE_STOPPED;
-    while (state != SL_RECORDSTATE_STOPPED) {
-      (*(opensl_stream->recorder_record))->GetRecordState(
-          opensl_stream->recorder_record,
-          &state);
+    do {
+      if (opensl_stream != NULL && opensl_stream->recorder_record != NULL) {
+        (*(opensl_stream->recorder_record))->GetRecordState(
+            opensl_stream->recorder_record,
+            &state);
+        if (state == SL_RECORDSTATE_STOPPED) {
+          break;
+        } else {
+          if (loop < 5)
+            usleep(3 * 1000);
+        }
+      } else {
+        LOGE("set recorder state failed! recorder_record is null!");
+        return SL_RESULT_RESOURCE_ERROR;
+      }
+    } while (loop-- > 0 && state != SL_RECORDSTATE_STOPPED);
+
+    if (loop <= 0) {
+      LOGE("set recorder state failed! remove recorder failed!");
+      return SL_RESULT_RESOURCE_ERROR;
     }
 
+    opensl_stream->input_state = 0;
     (*(opensl_stream->recorder_obj))->Destroy(opensl_stream->recorder_obj);
     opensl_stream->recorder_obj = NULL;
     opensl_stream->recorder_record = NULL;
     opensl_stream->recorder_buf_que = NULL;
+    LOGD("OpenSLES remove recorder success!");
   }
 
   return SL_RESULT_SUCCESS;
@@ -550,11 +637,46 @@ SLresult openSL_remove_recorder(OpenslStream *opensl_stream) {
 SLresult openSL_set_player_state(OpenslStream *opensl_stream,
                                  int player_id,
                                  SLuint32 audio_state) {
+  SLresult result = SL_RESULT_UNKNOWN_ERROR;
   if (opensl_stream != NULL &&
       *(opensl_stream->bq_player_play[player_id]) != NULL) {
     (*(opensl_stream->bq_player_play[player_id]))->SetPlayState(
         opensl_stream->bq_player_play[player_id],
         audio_state);
+    SLint16 loop = 10;
+    SLuint32 state = SL_PLAYSTATE_PLAYING;
+    (*(opensl_stream->bq_player_play[player_id]))->SetPlayState(
+        opensl_stream->bq_player_play[player_id],
+        audio_state);
+    while (loop-- > 0 && state != audio_state) {
+      (*(opensl_stream->bq_player_play[player_id]))->GetPlayState(
+          opensl_stream->bq_player_play[player_id],
+          &state);
+      if (loop < 5)
+        usleep(10 * 1000);
+    }
+    if (loop > 0 && audio_state == SL_PLAYSTATE_STOPPED) {
+      if (*opensl_stream->bq_player_buf_que[player_id] != NULL) {
+        result = (*opensl_stream->bq_player_buf_que[player_id])->Clear(
+            opensl_stream->bq_player_buf_que[player_id]);
+        if (result != SL_RESULT_SUCCESS)
+          LOGD("clear player queue failed(%d).", result);
+
+        notifyThreadLock(opensl_stream->outlock[player_id]);
+
+        if (opensl_stream->output_buf[player_id][0] != NULL &&
+            opensl_stream->output_buf[player_id][1] != NULL) {
+          memset(opensl_stream->output_buf[player_id][0],
+                 0,
+                 opensl_stream->out_buf_samples[player_id] * sizeof(short) * sizeof(char));
+          memset(opensl_stream->output_buf[player_id][1],
+                 0,
+                 opensl_stream->out_buf_samples[player_id] * sizeof(short) * sizeof(char));
+        }
+      } else {
+        LOGE("bq_player_buf_que is null, set player state failed!");
+      }
+    }
   } else {
     return SL_RESULT_PARAMETER_INVALID;
   }

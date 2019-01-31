@@ -10,7 +10,6 @@
 #include <string.h>
 
 #include "stdint.h"
-#include <stdbool.h>
 
 namespace audiomanager {
 
@@ -63,13 +62,30 @@ enum AMError {
 };
 
 /*---------------------------------------------------------------------------*/
+/* Event Code                                                                */
+/*---------------------------------------------------------------------------*/
+enum AMEvent {
+  kAMNone = 0,
+  kAMWritePromise = 1,
+  kAMWriteWait = 2,
+  kAMWriteTooLong = 3,
+
+  kAMPlayerStateChange = 4,
+  kAMRecorderStateChange = 5,
+};
+
+/*---------------------------------------------------------------------------*/
 /* Play/Record Status                                                        */
 /*---------------------------------------------------------------------------*/
 enum AMAudioState {
-  kAMAudioStateStopped = 1,
-  kAMAudioStatePaused = 2,
-  kAMAudioStatePlaying = 3,
-  kAMAudioStateRecording = 4,
+  kAMAudioStateNone = 0,
+  kAMAudioStateOpened = 1,
+  kAMAudioStateStopped = 2,
+  kAMAudioStatePaused = 3,
+  kAMAudioStateClosed = 4,
+  kAMAudioStatePlaying = 5,
+  kAMAudioStateRecording = 6,
+  kAMAudioStateFinished = 7,
 };
 
 /*---------------------------------------------------------------------------*/
@@ -80,7 +96,9 @@ enum AMFileType {
   kAMFileTypePCM = 1,
   kAMFileTypeURI = 2,
   kAMFileTypeASSETS = 3,
-  kAMFileTypeMAX = 4,
+  kAMFileTypeWAV = 4,
+  kAMFileTypeMP3 = 5,
+  kAMFileTypeMAX = 6,
 };
 
 enum AMFileMode {
@@ -108,6 +126,8 @@ typedef struct AMDataFormat_ {
   uint32_t channel_mask;
   uint32_t endianness;
   uint32_t micType;
+  uint32_t card;
+  uint32_t device;
 } AMDataFormat;
 
 enum AMFormatType {
@@ -194,12 +214,25 @@ typedef struct AMStatus_ {
 } AMStatus;
 
 /*---------------------------------------------------------------------------*/
-/* Audio Manager Versions */
+/* Audio Manager Versions                                                    */
 /*---------------------------------------------------------------------------*/
 typedef struct AMAudioVersions_ {
   const char *audio_manager_version;
   const char *audio_engine_version;
 } AMAudioVersions;
+
+/*---------------------------------------------------------------------------*/
+/* Audio Manager Event */
+/*---------------------------------------------------------------------------*/
+typedef void (*FuncAudioEventListener) (AMEvent event, int extra_data);
+
+struct AMEventListener {
+  AMEventListener() :
+    audio_event_callback(nullptr),
+    user_data(nullptr) {}
+  FuncAudioEventListener audio_event_callback;
+  void *user_data;
+};
 
 } // namespace audiomanager
 

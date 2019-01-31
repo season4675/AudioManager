@@ -6,6 +6,8 @@
 //  Copyright (c) 2018 season4675. All rights reserved.
 //
 
+#define TAG "AudioInputQueue"
+
 #include "audio_log.h"
 #include "circular_buffer.h"
 #include "AudioInputQueue.h"
@@ -102,6 +104,10 @@ SInt32 AudioInputQueue::InitRecorder() {
   try {
     // create the queue
     if (NULL == mQueue) {
+      // init audioSession
+      AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+      [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
+
       status = AudioQueueNewInput(&mRecordFormat,
                                   InputBufferHandler,
                                   this /* userData */,
@@ -110,27 +116,27 @@ SInt32 AudioInputQueue::InitRecorder() {
                                   0 /* flags */,
                                   &mQueue);
       if (!status) {
-        LOGD("Create Audio_Queue_New_Input success.");
+        KLOGD(TAG, "Create Audio_Queue_New_Input success.");
       } else {
-        LOGE("Create Audio_Queue_New_Input failed(%d).", status);
+        KLOGE(TAG, "Create Audio_Queue_New_Input failed(%d).", status);
       }
       // allocate and enqueue buffers
       // enough bytes for half a second$
       bufferByteSize = ComputeRecordBufferSize(&mRecordFormat,
                                                kBufferDurationSeconds);
-      LOGD("Compute recorder %f seconds data buffer size is %d.",
+      KLOGD(TAG, "Compute recorder %f seconds data buffer size is %d.",
           kBufferDurationSeconds,
           bufferByteSize);
       for (i = 0; i < kNumberRecordBuffers; ++i) {
         status = AudioQueueAllocateBuffer(mQueue, bufferByteSize, &mBuffers[i]);
         if (status) {
-          LOGE("RecordBufferNum %d: Audio Queue Allocate Buffer failed(%d).",
+          KLOGE(TAG, "RecordBufferNum %d: Audio Queue Allocate Buffer failed(%d).",
               i,
               status);
         }
         status = AudioQueueEnqueueBuffer(mQueue, mBuffers[i], 0, NULL);
         if (status) {
-          LOGE("RecordBufferNum %d: Audio Queue Enqueue Buffer failed(%d).",
+          KLOGE(TAG, "RecordBufferNum %d: Audio Queue Enqueue Buffer failed(%d).",
               i,
               status);
         }
@@ -141,7 +147,7 @@ SInt32 AudioInputQueue::InitRecorder() {
     inrb = create_circular_buffer(bufferByteSize * 4);
     inputBuffer = (char *)calloc(bufferByteSize, sizeof(char));
     if (NULL == inrb || NULL == inputBuffer)
-      LOGE("Recorder calloc buffer failed!");
+      KLOGE(TAG, "Recorder calloc buffer failed!");
   } catch (NSException *e) {
     NSLog(@"Error: %@ (%@)", e.name, e.reason);
   } catch (...) {

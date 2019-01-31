@@ -5,6 +5,7 @@
 #ifndef AUDIOMANAGER_COMMON_INCLUDE_AUDIO_MANAGER_IMPL_H_
 #define AUDIOMANAGER_COMMON_INCLUDE_AUDIO_MANAGER_IMPL_H_
 
+#include <mutex>
 #include "audio_common.h"
 #include "audio_manager.h"
 #include "audio_engine.h"
@@ -24,16 +25,17 @@ class AudioManagerImpl : public AudioManager {
   virtual AMResult audio_IAudioManager_getPlayerVolume(int player_id);
   virtual AMResult audio_IAudioManager_setPlayerMute(int player_id,
                                                      bool mute);
+  virtual AMResult audio_IAudioManager_registerListener(const AMEventListener &listener);
 
   // Audio Output
-  virtual AMResult audio_IAudioOutput_open(AMDataFormat *data_format);
+  virtual AMResult audio_IAudioOutput_open(AMDataFormat *src, AMDataFormat *sink);
   virtual AMResult audio_IAudioOutput_close(int player_id);
   virtual AMBufferCount audio_IAudioOutput_write(void *src_buffer,
                                                  const int buffer_size,
                                                  int player_id);
   virtual AMBufferCount audio_IAudioOutput_getBufferCount(int player_id);
   virtual AMResult audio_IAudioOutput_pause(int player_id);
-  virtual AMResult audio_IAudioOutput_stop(int player_id);
+  virtual AMResult audio_IAudioOutput_stop(int player_id, bool drain = false);
   virtual AMResult audio_IAudioOutput_getAudioFormat(
       AMDataFormat *data_format,
       int player_id);
@@ -94,6 +96,7 @@ class AudioManagerImpl : public AudioManager {
   AMAudioStatus *output_audio_status_;
   AMAudioVersions *audio_versions_;
   AMStatus *audio_status_;
+  std::mutex lock;
 };
 
 } // namespace audiomanager

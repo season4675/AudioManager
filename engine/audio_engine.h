@@ -10,6 +10,11 @@
 
 namespace audiomanager {
 
+enum FormatTransformFlag {
+  kNoneTransform,
+  kMonoToStereo,
+};
+
 class AudioEngine {
  public:
   AudioEngine();
@@ -19,16 +24,17 @@ class AudioEngine {
   AMResult audio_engine_set_player_vol(int vol, int player_id);
   AMResult audio_engine_get_player_vol(int player_id);
   AMResult audio_engine_set_player_mute(int player_id, bool mute);
+  void audio_engine_registerListener(const AMEventListener &listener);
 
   // Audio Engine Output
-  AMResult audio_engine_output_open(AMDataFormat *data_format);
+  AMResult audio_engine_output_open(AMDataFormat *src, AMDataFormat *sink);
   AMResult audio_engine_output_close(int player_id);
   AMBufferCount audio_engine_output_write(void *src_buffer,
                                           const int buffer_size,
                                           int player_id);
   AMBufferCount audio_engine_output_getBufferCount(int player_id);
   AMResult audio_engine_output_pause(int player_id);
-  AMResult audio_engine_output_stop(int player_id);
+  AMResult audio_engine_output_stop(int player_id, bool drain);
   AMResult audio_engine_output_getAudioFormat(AMDataFormat *data_format,
                                               int player_id);
   AMResult audio_engine_output_getAudioStatus(AMAudioStatus *audio_status,
@@ -78,6 +84,10 @@ class AudioEngine {
       AMAudioStatus *audio_status);
 
  private:
+  AMResult audio_format_parse(int player_id,
+                              AMDataFormat *src,
+                              AMDataFormat *sink);
+  FormatTransformFlag transform_flag[PLAYER_MAX];
   AudioEngineImpl *engine_impl_;
 };
 

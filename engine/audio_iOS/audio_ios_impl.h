@@ -13,7 +13,8 @@
 
 namespace audiomanager {
 
-static char kAudioEngineVersion[128] = "Audio Engine iOS Version ";
+// iOS Audio Engine use AudioUnit
+static char kAudioEngineVersion[128] = "AudioUnit";
 
 class AudioQueueEngine : public AudioEngineImpl {
  public:
@@ -22,6 +23,7 @@ class AudioQueueEngine : public AudioEngineImpl {
   virtual AMResult audio_output_set_vol(int vol, int player_id);
   virtual AMResult audio_output_get_vol(int player_id);
   virtual AMResult audio_output_set_mute(int player_id, bool mute);
+  virtual void audio_registerListener(const AMEventListener &listener);
 
   virtual AMResult audio_output_open(AMDataFormat *data_format);
   virtual AMResult audio_output_close(int player_id);
@@ -30,7 +32,7 @@ class AudioQueueEngine : public AudioEngineImpl {
                                            int player_id);
   virtual AMBufferCount audio_output_getBufferCount(int player_id);
   virtual AMResult audio_output_pause(int player_id);
-  virtual AMResult audio_output_stop(int player_id);
+  virtual AMResult audio_output_stop(int player_id, bool drain = false);
   virtual AMResult audio_output_getAudioFormat(AMDataFormat *data_format,
                                                int player_id);
   virtual AMResult audio_output_getAudioStatus(AMAudioStatus *audio_status,
@@ -73,6 +75,8 @@ class AudioQueueEngine : public AudioEngineImpl {
   virtual AMResult audio_inputToFile_getAudioStatus(
       AMAudioStatus *audio_status);
   virtual AMResult audio_inputToFile_setAudioStatus(AMAudioStatus *audio_status);
+
+  AMEventListener audio_listener_;
 };
 
 } // namespace audiomanager

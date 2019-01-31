@@ -48,6 +48,7 @@ class AudioOutputQueue
   circular_buffer *outrb;
   char *outputBuffer;
   pthread_mutex_t output_mutex;
+  int bufSizeDurationOneSec;
 
  private:
   AudioQueueRef mQueue;

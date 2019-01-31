@@ -2,6 +2,8 @@
  * File: AudioManager/engine/audio_openSL/audio_opensl_impl.cc
  */
 
+#define TAG "AudioOpenslImpl"
+
 #include "opensl_io.h"
 #include "audio_common.h"
 #include "audio_log.h"
@@ -25,6 +27,10 @@ static AMResult parse_data_format(AMDataFormat *am_data_format,
       sl_data_format->samplesPerSec = SL_SAMPLINGRATE_16;
       break;
     }
+    case kAMSampleRate24K: {
+      sl_data_format->samplesPerSec = SL_SAMPLINGRATE_24;
+      break;
+    }
     case kAMSampleRate32K: {
       sl_data_format->samplesPerSec = SL_SAMPLINGRATE_32;
       break;
@@ -38,8 +44,8 @@ static AMResult parse_data_format(AMDataFormat *am_data_format,
       break;
     }
     default: {
-      LOGI("Use default sample rate 16K.");
-      sl_data_format->samplesPerSec = SL_SAMPLINGRATE_48;
+      KLOGI(TAG, "Use default sample rate 16K.");
+      sl_data_format->samplesPerSec = SL_SAMPLINGRATE_16;
     }
   }
 
@@ -50,7 +56,7 @@ static AMResult parse_data_format(AMDataFormat *am_data_format,
       break;
     }
     default: {
-      LOGI("Use default format type PCM.");
+      KLOGI(TAG, "Use default format type PCM.");
       sl_data_format->formatType = SL_DATAFORMAT_PCM;
     }
   }
@@ -73,7 +79,7 @@ static AMResult parse_data_format(AMDataFormat *am_data_format,
       break;
     }
     default: {
-      LOGI("Use default bits per sample 16bits.");
+      KLOGI(TAG, "Use default bits per sample 16bits.");
       sl_data_format->bitsPerSample = SL_PCMSAMPLEFORMAT_FIXED_16;
     }
   }
@@ -83,7 +89,7 @@ static AMResult parse_data_format(AMDataFormat *am_data_format,
   else if (kAMByteOrderBigEndian == am_data_format->endianness)
     sl_data_format->endianness = SL_BYTEORDER_BIGENDIAN;
   else {
-    LOGI("Use default endiannes little endian.");
+    KLOGI(TAG, "Use default endiannes little endian.");
     sl_data_format->endianness = SL_BYTEORDER_LITTLEENDIAN;
   }
 
@@ -106,7 +112,7 @@ char* OpenslEngine::audio_get_version() {
   if (NULL == opensl_stream)
     opensl_stream = global_opensl_out;
   if (NULL == opensl_stream) {
-    LOGE("Donnot open any output device or input device!");
+    KLOGE(TAG, "Donnot open any output device or input device!");
     return engine_version;
   }
 
@@ -141,6 +147,11 @@ AMResult OpenslEngine::audio_output_set_mute(int player_id, bool mute) {
   return -result;
 }
 
+void OpenslEngine::audio_registerListener(const AMEventListener &listener) {
+  audio_listener_.audio_event_callback = listener.audio_event_callback;
+  audio_listener_.user_data = listener.user_data;
+}
+
 AMResult OpenslEngine::audio_output_open(AMDataFormat *out) {
   OpenslStream *opensl_stream = NULL;
   AMResult result = -1;
@@ -148,30 +159,30 @@ AMResult OpenslEngine::audio_output_open(AMDataFormat *out) {
 
   if (NULL == global_opensl_in && NULL == global_opensl_out) {
     opensl_stream = (OpenslStream *)malloc(sizeof(OpenslStream));
-    LOGD("Create a new OpenSL_Stream for output.");
+    KLOGD(TAG, "Create a new OpenSL_Stream for output.");
     if (NULL == opensl_stream) {
-      LOGE("Create OpenSL_Stream failed!");
+      KLOGE(TAG, "Create OpenSL_Stream failed!");
       return -kAMMemoryFailure;
     }
     memset(opensl_stream, 0, sizeof(OpenslStream));
   } else if (global_opensl_in != NULL) {
     opensl_stream = global_opensl_in;
-    LOGD("OpenSL_Stream of input has been existed. Use the same.");
+    KLOGD(TAG, "OpenSL_Stream of input has been existed. Use the same for output.");
   } else if (global_opensl_out != NULL) {
     opensl_stream = global_opensl_out;
-    LOGD("OpenSL_Stream of output has been existed. Use the same.");
+    KLOGD(TAG, "OpenSL_Stream of output has been existed. Use the same for output.");
   }
   global_opensl_out = opensl_stream;
 
   // generate player id
   for (player_id = 0; player_id < PLAYER_MAX; player_id++) {
     if (0 == ((opensl_stream->player_channel_mask >> player_id) & 0x1)) {
-      LOGD("Player ID (%d) is usable at present.", player_id);
+      KLOGD(TAG, "Player ID (%d) is usable at present.", player_id);
       break;
     }
   }
   if (player_id >= PLAYER_MAX) {
-    LOGI("Have exhausted all player.");
+    KLOGI(TAG, "Have exhausted all player.");
     return -kAMParameterInvalid;
   }
 
@@ -191,7 +202,7 @@ AMResult OpenslEngine::audio_output_open(AMDataFormat *out) {
         sizeof(char));
     if (NULL == opensl_stream->output_buf[player_id][0] ||
         NULL == opensl_stream->output_buf[player_id][1]) {
-      LOGE("Output buffer of OpenSL_Stream calloc failed!");
+      KLOGE(TAG, "Output buffer of OpenSL_Stream calloc failed!");
       audio_output_close(player_id);
       return -kAMMemoryFailure;
     }
@@ -204,11 +215,11 @@ AMResult OpenslEngine::audio_output_open(AMDataFormat *out) {
   if (NULL == global_opensl_in && 0 == opensl_stream->player_num) {
     result = openSL_create_engine(opensl_stream);
     if (result != SL_RESULT_SUCCESS) {
-      LOGE("Create openSL engine failed! result = %d.", result);
+      KLOGE(TAG, "Create openSL engine failed! result = %d.", result);
       audio_output_close(player_id);
       return -result;
     } else {
-      LOGD("Create openSL engine success!");
+      KLOGD(TAG, "Create openSL engine success!");
     }
   }
 
@@ -216,22 +227,22 @@ AMResult OpenslEngine::audio_output_open(AMDataFormat *out) {
   if (0 == opensl_stream->player_num) {
     result = openSL_create_output_mix(opensl_stream);
     if (result != SL_RESULT_SUCCESS) {
-      LOGE("Create openSL outputMix failed! result = %d.", result);
+      KLOGE(TAG, "Create openSL outputMix failed! result = %d.", result);
       audio_output_close(player_id);
       return -result;
     } else {
-      LOGD("Create openSL outputMix success!");
+      KLOGD(TAG, "Create openSL outputMix success!");
     }
   }
 
   // config player and create player
   result = openSL_init_player(opensl_stream, player_id);
   if (result != SL_RESULT_SUCCESS) {
-    LOGE("Create openSL player(%d) failed! result = %d.", player_id, result);
+    KLOGE(TAG, "Create openSL player(%d) failed! result = %d.", player_id, result);
     audio_output_close(player_id);
     return -result;
   } else {
-    LOGD("Create openSL player(%d) success!", player_id);
+    KLOGD(TAG, "Create openSL player(%d) success!", player_id);
     opensl_stream->player_channel_mask |= (1<<player_id);
     opensl_stream->player_num++;
     // return player id
@@ -255,7 +266,7 @@ AMResult OpenslEngine::audio_output_close(int player_id) {
     if (opensl_stream->player_num != 0) opensl_stream->player_num--;
     opensl_stream->player_channel_mask &= ~(1<<player_id);
   } else {
-    LOGE("This player was null.");
+    KLOGE(TAG, "This player was null.");
     return -result;
   }
   // destroy output mix
@@ -275,6 +286,11 @@ AMResult OpenslEngine::audio_output_close(int player_id) {
     free(opensl_stream->output_buf[player_id][1]);
     opensl_stream->output_buf[player_id][1] = NULL;
   }
+  if (opensl_stream->outlock[player_id] != NULL) {
+    notifyThreadLock(opensl_stream->outlock[player_id]);
+    destroyThreadLock(opensl_stream->outlock[player_id]);
+    opensl_stream->outlock[player_id] = NULL;
+  }
   if (NULL == global_opensl_in && NULL == global_opensl_out) free(opensl_stream);
 
   return kAMSuccess;
@@ -289,7 +305,7 @@ AMBufferCount OpenslEngine::audio_output_write(void *src_buffer,
 
   if (NULL == opensl_stream) return -kAMResourceError;
   if (!(opensl_stream->player_channel_mask & (1<<player_id))) {
-    LOGE("Player id(%d) is invalid. Player channel mask is 0x%x",
+    KLOGE(TAG, "Player id(%d) is invalid. Player channel mask is 0x%x",
         player_id,
         opensl_stream->player_channel_mask);
     return -kAMParameterInvalid;
@@ -300,7 +316,7 @@ AMBufferCount OpenslEngine::audio_output_write(void *src_buffer,
                                      player_id,
                                      SL_PLAYSTATE_PLAYING);
     if (result != SL_RESULT_SUCCESS) {
-      LOGE("Output set player state playing failed.(%d)", result);
+      KLOGE(TAG, "Output set player state playing failed.(%d)", result);
       return bytes;
     }
     opensl_stream->output_state[player_id] = SL_PLAYSTATE_PLAYING;
@@ -328,7 +344,7 @@ AMResult OpenslEngine::audio_output_pause(int player_id) {
   }
 }
 
-AMResult OpenslEngine::audio_output_stop(int player_id) {
+AMResult OpenslEngine::audio_output_stop(int player_id, bool drain) {
   OpenslStream *opensl_stream = global_opensl_out;
   if (opensl_stream != NULL) {
     openSL_set_player_state(opensl_stream, player_id, SL_PLAYSTATE_STOPPED);
@@ -362,30 +378,30 @@ AMResult OpenslEngine::audio_outputFromFile_open(AMFileInfo *file_info,
 
   if (NULL == global_opensl_in && NULL == global_opensl_out) {
     opensl_stream = (OpenslStream *)malloc(sizeof(OpenslStream));
-    LOGD("Create a new OpenSL_Stream for output.");
+    KLOGD(TAG, "Create a new OpenSL_Stream for output.");
     if (NULL == opensl_stream) {
-      LOGE("Create OpenSL_Stream failed!");
+      KLOGE(TAG, "Create OpenSL_Stream failed!");
       return -kAMMemoryFailure;
     }
     memset(opensl_stream, 0, sizeof(OpenslStream));
   } else if (global_opensl_in != NULL) {
     opensl_stream = global_opensl_in;
-    LOGD("OpenSL_Stream of input has been existed. Use the same.");
+    KLOGD(TAG, "OpenSL_Stream of input has been existed. Use the same.");
   } else if (global_opensl_out != NULL) {
     opensl_stream = global_opensl_out;
-    LOGD("OpenSL_Stream of output has been existed. Use the same.");
+    KLOGD(TAG, "OpenSL_Stream of output has been existed. Use the same.");
   }
   global_opensl_out = opensl_stream;
 
   // generate player id
   for (player_id = 0; player_id < PLAYER_MAX; player_id++) {
     if (0 == ((opensl_stream->player_channel_mask >> player_id) & 0x1)) {
-      LOGD("Player ID (%d) is usable at present.", player_id);
+      KLOGD(TAG, "Player ID (%d) is usable at present.", player_id);
       break;
     }
   }
   if (player_id >= PLAYER_MAX) {
-    LOGI("Have exhausted all player.");
+    KLOGI(TAG, "Have exhausted all player.");
     return -kAMParameterInvalid;
   }
 
@@ -402,11 +418,11 @@ AMResult OpenslEngine::audio_outputFromFile_open(AMFileInfo *file_info,
   if (NULL == global_opensl_in && 0 == opensl_stream->player_num) {
     result = openSL_create_engine(opensl_stream);
     if (result != SL_RESULT_SUCCESS) {
-      LOGE("Create openSL engine failed! result = %d.", result);
+      KLOGE(TAG, "Create openSL engine failed! result = %d.", result);
       audio_outputFromFile_close(player_id);
       return -result;
     } else {
-      LOGD("Create openSL engine success!");
+      KLOGD(TAG, "Create openSL engine success!");
     }
   }
 
@@ -414,22 +430,22 @@ AMResult OpenslEngine::audio_outputFromFile_open(AMFileInfo *file_info,
   if (0 == opensl_stream->player_num) {
     result = openSL_create_output_mix(opensl_stream);
     if (result != SL_RESULT_SUCCESS) {
-      LOGE("Create openSL outputMix failed! result = %d.", result);
+      KLOGE(TAG, "Create openSL outputMix failed! result = %d.", result);
       audio_outputFromFile_close(player_id);
       return -result;
     } else {
-      LOGD("Create openSL outputMix success!");
+      KLOGD(TAG, "Create openSL outputMix success!");
     }
   }
 
   // config player and create player
   result = openSL_init_player(opensl_stream, player_id);
   if (result != SL_RESULT_SUCCESS) {
-    LOGE("Create openSL player(%d) failed! result = %d.", player_id, result);
+    KLOGE(TAG, "Create openSL player(%d) failed! result = %d.", player_id, result);
     audio_outputFromFile_close(player_id);
     return -result;
   } else {
-    LOGD("Create openSL player(%d) success!", player_id);
+    KLOGD(TAG, "Create openSL player(%d) success!", player_id);
     opensl_stream->player_channel_mask |= (1<<player_id);
     opensl_stream->player_num++;
     // return player id
@@ -450,7 +466,7 @@ AMResult OpenslEngine::audio_outputFromFile_close(int player_id) {
     if (opensl_stream->player_num != 0) opensl_stream->player_num--;
     opensl_stream->player_channel_mask &= ~(1<<player_id);
   } else {
-    LOGE("This player was null.");
+    KLOGE(TAG, "This player was null.");
     return -result;
   }
   // destroy output mix
@@ -519,20 +535,29 @@ AMResult OpenslEngine::audio_input_open(AMDataFormat *data_format) {
 
   if (NULL == global_opensl_in && NULL == global_opensl_out) {
     opensl_stream = (OpenslStream *)malloc(sizeof(OpenslStream));
-    LOGD("Create a new OpenSL_Stream for input.");
+    memset(opensl_stream, 0, sizeof(OpenslStream));
+    KLOGD(TAG, "Create a new OpenSL_Stream for input.");
   } else if (global_opensl_out != NULL) {
     opensl_stream = global_opensl_out;
-    LOGD("OpenSL_Stream of output has been existed. Use the same.");
+    KLOGD(TAG, "OpenSL_Stream of output has been existed. Use the same for input.");
   } else if (global_opensl_in != NULL) {
     opensl_stream = global_opensl_in;
-    LOGD("OpenSL_Stream of input has been existed. Use the same.");
+    KLOGD(TAG, "OpenSL_Stream of input has been existed. Use the same for input.");
   }
 
   if (NULL == opensl_stream) {
-    LOGE("Create OpenSL_Stream failed!");
+    KLOGE(TAG, "Create OpenSL_Stream failed!");
     return -kAMMemoryFailure;
   }
   global_opensl_in = opensl_stream;
+
+  if (opensl_stream->input_state == SL_RECORDSTATE_RECORDING ||
+      opensl_stream->input_state == SL_RECORDSTATE_PAUSED ||
+      opensl_stream->input_state == SL_RECORDSTATE_STOPPED) {
+    KLOGD(TAG, "OpenSL_Stream of input has opened, donnot need open again.");
+    result = kAMSuccess;
+    return result;
+  }
 
   // parse AMDataFormat into OpenslStream
   parse_data_format(data_format, &opensl_stream->in_format_pcm);
@@ -550,7 +575,7 @@ AMResult OpenslEngine::audio_input_open(AMDataFormat *data_format) {
         sizeof(char));
     if (NULL == opensl_stream->input_buf[0] ||
         NULL == opensl_stream->input_buf[1]) {
-      LOGE("Input buffer of OpenSL_Stream calloc failed!");
+      KLOGE(TAG, "Input buffer of OpenSL_Stream calloc failed!");
       audio_input_close();
       return -kAMMemoryFailure;
     }
@@ -562,22 +587,22 @@ AMResult OpenslEngine::audio_input_open(AMDataFormat *data_format) {
   if (NULL == global_opensl_out) {
     result = openSL_create_engine(opensl_stream);
     if (result != SL_RESULT_SUCCESS) {
-      LOGE("Create openSL engine failed! result = %d.", result);
+      KLOGE(TAG, "Create openSL engine failed! result = %d.", result);
       audio_input_close();
       return -result;
     } else {
-      LOGD("Create openSL engine success!");
+      KLOGD(TAG, "Create openSL engine success!");
     }
   }
 
   // config recorder and create recorder
   result = openSL_init_recorder(opensl_stream);
   if (result != SL_RESULT_SUCCESS) {
-    LOGE("Create openSL recorder failed! result = %d.", result);
+    KLOGE(TAG, "Create openSL recorder failed! result = %d.", result);
     audio_input_close();
     return -result;
   } else {
-    LOGD("Create openSL recorder success!");
+    KLOGD(TAG, "Create openSL recorder success!");
   }
 
   notifyThreadLock(opensl_stream->inlock);
@@ -589,13 +614,12 @@ AMResult OpenslEngine::audio_input_open(AMDataFormat *data_format) {
 AMResult OpenslEngine::audio_input_close() {
   OpenslStream *opensl_stream = global_opensl_in;
 
-  if (NULL == opensl_stream)
+  if (NULL == opensl_stream) {
+    KLOGD(TAG, "opensl_stream has been nullptr");
     return kAMSuccess;
+  }
 
   openSL_remove_recorder(opensl_stream);
-  if (NULL == global_opensl_out)
-    openSL_destroy_engine(opensl_stream);
-
   if (opensl_stream->input_buf[0] != NULL) {
     free(opensl_stream->input_buf[0]);
     opensl_stream->input_buf[0] = NULL;
@@ -604,10 +628,17 @@ AMResult OpenslEngine::audio_input_close() {
     free(opensl_stream->input_buf[1]);
     opensl_stream->input_buf[1] = NULL;
   }
-
-  global_opensl_in = NULL;
-  if (NULL == global_opensl_out)
+  if (opensl_stream->inlock != NULL) {
+    notifyThreadLock(opensl_stream->inlock);
+    destroyThreadLock(opensl_stream->inlock);
+    opensl_stream->inlock = NULL;
+  }
+  if (NULL == global_opensl_out) {
+    openSL_destroy_engine(opensl_stream);
     free(opensl_stream);
+    opensl_stream = NULL;
+  }
+  global_opensl_in = NULL;
 
   return kAMSuccess;
 }

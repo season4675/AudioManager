@@ -2,35 +2,43 @@
  * File: AudioManager/common/src/audio_manager.cc
  */
 
+#define TAG "AudioManager"
+
 #include "audio_manager.h"
 #include "audio_manager_impl.h"
 #include "audio_log.h"
 
 namespace audiomanager {
 
+static AudioManagerImpl *audio_manager_impl = NULL;
+
 AudioManager *AudioManager::Create() {
-  AudioManagerImpl *am_impl = new AudioManagerImpl();
-  return am_impl;
+  if (audio_manager_impl == NULL) {
+    audio_manager_impl = new AudioManagerImpl();
+  }
+  return audio_manager_impl;
 }
 
 AMResult AudioManager::Destroy(AudioManager *am) {
   AMStatus *status = NULL;
 
-  if (NULL == am) {
-    LOGE("AudioManager is inexistent, please create it firtst!");
+  if (NULL == am || NULL == audio_manager_impl) {
+    KLOGE(TAG, "AudioManager is inexistent, please create it firtst!");
     return -kAMPreconditionsViolated;
   }
   AudioManagerImpl *am_impl = reinterpret_cast<AudioManagerImpl *>(am);
   status = am_impl->audio_IAudioManager_getStatus();
   if (NULL == status) {
-    LOGE("get status is null when destory AudioManager.");
+    KLOGE(TAG, "get status is null when destory AudioManager.");
     return -kAMResourceLost;
   }
   if (0 == status->player_num && 0 == status->recorder_num) {
     delete am_impl;
     am_impl = NULL;
     am = NULL;
+    audio_manager_impl = NULL;
   } else {
+    KLOGE(TAG, "player or recorder has not closed yet, please close it first!");
     return -kAMIoError;
   }
 

@@ -6,6 +6,8 @@
 //  Copyright (c) 2018 season4675. All rights reserved.
 //
 
+#define TAG "CircularBuffer"
+
 #include "audio_log.h"
 #include "circular_buffer.h"
 #include <string>
@@ -37,13 +39,11 @@ void clean_circular_buffer(circular_buffer *p) {
 int checkspace_circular_buffer(circular_buffer *p, int writeCheck) {
   int wp = p->wp, rp = p->rp, size = p->size;
   if (writeCheck) {
-    if (wp > rp) return rp - wp + size;
-    else if (wp < rp) return rp - wp;
-    else return size;
+    if (wp >= rp) return rp - wp + size - 1;
+    else return rp - wp - 1;
   } else {
-    if (wp > rp) return wp - rp;
-    else if (wp < rp) return wp - rp + size;
-    else return 0;
+    if (wp > rp) return wp - rp - 1;
+    else return wp - rp + size - 1;
   }
 }
 
@@ -53,6 +53,7 @@ int read_circular_buffer_bytes(circular_buffer *p, char *out, int bytes) {
   int i = 0, rp = p->rp;
   char *buffer = p->buffer;
   if ((remaining = checkspace_circular_buffer(p, 0)) == 0) {
+    KLOGE(TAG, "read_circular_buffer_bytes remaining 0");
     return 0;
   }
   bytesread = bytes > remaining ? remaining : bytes;
@@ -76,6 +77,7 @@ int write_circular_buffer_bytes(circular_buffer *p, char *in, int bytes) {
   int i = 0, wp = p->wp;
   char *buffer = p->buffer;
   if ((remaining = checkspace_circular_buffer(p, 1)) == 0) {
+    KLOGE(TAG, "write_circular_buffer_bytes remaining 0");
     return 0;
   }
   byteswrite = bytes > remaining ? remaining : bytes;
@@ -89,7 +91,7 @@ int write_circular_buffer_bytes(circular_buffer *p, char *in, int bytes) {
 
 void free_circular_buffer(circular_buffer *p) {
   if (p == NULL) {
-    LOGE("free_circular_buffer error, because of p is null.");
+    KLOGE(TAG, "free_circular_buffer error, because of p is null.");
     return;
   }
   free(p->buffer);
